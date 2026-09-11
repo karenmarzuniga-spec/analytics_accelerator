@@ -178,5 +178,110 @@ WHERE (name LIKE 'C%' OR name LIKE 'W%')
               AND ((primary_poc LIKE '%ana%' OR primary_poc LIKE '%Ana%') 
               AND primary_poc NOT LIKE '%eana%');
 -- SQL Joins
+---- INNER JOIN only returns rows that appear in both tables
+
+SELECT orders.* ( This says to pull al comulms from order table only)
+FROM orders
+JOIN accounts
+ON orders.accounts_id = accounts.id; ( only for rows where the accounts_id in orders matches the id in accounts)
+
+OR
+
+SELECT * ( All columns from both tables)
+FROM orders
+JOIN accounts
+ON orders.account_id = accounts.id;
+
+OR
+
+SELECT accounts.name, orders.occurred_at (Pulls only select columns)
+FROM orders
+JOIN accounts
+ON orders.account_id = accounts.id;
+
+---  Try pulling all the data from the accounts table, and all the data from the orders table.
+SELECT *
+From orders ( STarting table)
+JOIN accounts (connecting table)
+ON orders.accounts_id = accounts.id;
+
+-- Try pulling standard_qty, gloss_qty, and poster_qty from the orders table, and the website and the primary_poc from the accounts table.
+SELECT orders.standard_qty,
+       orders.gloss_qty,
+       orders.poster_qty,
+       accounts.website,
+       accounts.primary_poc
+FROM orders
+JOIN accounts
+ON orders.account_id = accounts.id;
+
+-- Join multiple tables ( pull all columns )
+SELECT *
+FROM web_events
+JOIN accounts
+ON web_events.account_id = accounts.id
+JOIN orders
+ON accounts.id = orders.account_id
+
+-- Join multiple tables pull specific columns 
+SELECT web_events.channel, accounts.name, orders.total
+FROM web_events
+JOIN accounts
+ON web_events.account_id = accounts.id
+JOIN orders
+ON accounts.id = orders.account_id
+
+-- Allias 
+FROM tablename t1
+JOIN tablename2 t2
+SELECT col1 + col2 total, col3
+
+-- Provide a table for all web_events associated with account name of Walmart. There should be three columns. Be sure to include the primary_poc, time of the event, and the channel for each event. Additionally, you might choose to add a fourth column to assure only Walmart events were chosen.
+--MY ANSWER
+  SELECT accounts.primary_poc,
+web_events.occurred_at,
+web_events.channel,
+accounts.name,
+FROM accounts
+JOIN web_events
+ON accounts.id = web_events.account_id
+WHERE name IN ('Walmart')
+-- CORRECT ANSWER
+SELECT a.primary_poc, w.occurred_at, w.channel, a.name 
+  FROM web_events w 
+  JOIN accounts a 
+  ON w.account_id = a.id 
+  WHERE a.name = 'Walmart';
+
+-- Provide a table that provides the region for each sales_rep along with their associated accounts. Your final table should include three columns: the region name, the sales rep name, and the account name. Sort the accounts alphabetically (A-Z) according to account name.
+SELECT r.name AS region_name, sr.name AS sales_rep_name, a.name AS account_name
+FROM region r
+JOIN sales_reps sr
+ON r.id = sr.region_id
+JOIN accounts a
+ON sr.id = a.sales_rep_id
+ORDER BY a.name
+
+-- Provide the name for each region for every order, as well as the account name and the unit price they paid (total_amt_usd/total) for the order. Your final table should have 3 columns: region name, account name, and unit price. A few accounts have 0 for total, so I divided by (total + 0.01) to assure not dividing by zero.
+SELECT r.name AS region, a.name AS account, (o.total_amt_usd/(o.total +0.01)) AS unit_price
+FROM orders o
+JOIN accounts a 
+ON o.account_id = a.id
+JOIN sales_reps s
+ON s.id = a.sales_rep_id
+JOIN region r 
+ON r.id = s.region_id
+
+---- Outter Join This will return the inner join result set, as well as any unmatched rows from either of the two tables being joined.
+---- INNER JOIN only returns rows that appear in both tables
+---- LEFT JOIN (Inner changeable with RIght joins)
+SELECT 
+FROM left table 
+LEFT JOIN right table
+
+--Provide a table that provides the region for each sales_rep along with their associated accounts. This time only for the Midwest region. Your final table should include three columns: the region name, the sales rep name, and the account name. Sort the accounts alphabetically (A-Z) according to account name.
+
+
+
 -- Aggregations
 -- SQL Subqueries * Temporary Tables
