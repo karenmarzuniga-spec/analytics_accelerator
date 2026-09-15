@@ -7,6 +7,7 @@
 ---- FROM specifies which tabel you want to sleect columns from
 ---- astricks means all 
 ---- ORDER by allows you to order by dare */
+-------You can do Order by 2; ( the number is the column listed in your select clause)
 ---- WHERE allows you to filter a set of results based on specific criteria
 ------ Can use non numerical values with operator but you need to put value in SINGLE Quotes
 --------- > Greater than 
@@ -398,4 +399,63 @@ FROM orders;
 -- Via the video, you might be interested in how to calculate the MEDIAN. Though this is more advanced than what we have covered so far try finding - what is the MEDIAN total_usd spent on all orders?
   SELECT PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY total_amt_usd) AS median_total_usd
 FROM orders;
+
+Select * 
+FROM
+WHERE 
+GROUP BY 
+ORDER BY
+
+-- Which account (by name) placed the earliest order? Your solution should have the account name and the date of the order.
+SELECT a.name, o.occurred_at
+FROM accounts a
+JOIN orders o
+ON a.id = o.account_id
+ORDER BY occurred_at
+LIMIT 1;
+
+-- Find the total sales in usd for each account. You should include two columns - the total sales for each company's orders in usd and the company name.
+SELECT a.name AS account, SUM(o.total_amt_usd) AS total_sales
+FROM accounts a
+JOIN orders o
+ON a.id = o.account_id
+GROUP BY account 
+
+-- Via what channel did the most recent (latest) web_event occur, which account was associated with this web_event? Your query should return only three values - the date, channel, and account name.
+SELECT a.name AS account, w.channel AS Channel, w.occurred_at AS Date 
+FROM accounts a
+JOIN web_events w
+ON w.account_id = a.id
+ORDER BY date desc
+limit 1;
+
+-- Find the total number of times each type of channel from the web_events was used. Your final table should have two columns - the channel and the number of times the channel was used.
+SELECT channel, COUNT(Channel)
+FROM web_events
+GROUP BY channel
+
+  -- Who was the primary contact associated with the earliest web_event?
+SELECT a.primary_poc, w.occurred_at
+FROM web_events w
+JOIN accounts a
+ON w.account_id = a.id
+ORDER BY w.occurred_at
+limit 1
+-- What was the smallest order placed by each account in terms of total usd. Provide only two columns - the account name and the total usd. Order from smallest dollar amounts to largest.
+SELECT a.name AS account, MIN(o.total_amt_usd) AS smallest_order
+FROM orders o
+JOIN accounts a
+ON o.account_id = a.id
+GROUP BY account
+ORDER BY smallest_order
+
+-- Find the number of sales reps in each region. Your final table should have two columns - the region and the number of sales_reps. Order from fewest reps to most reps.
+SELECT r.name region , COUNT(s.id ) AS Sales_rep_COUNT
+FROM sales_reps s
+JOIN region r
+ON s.region_id = r.id
+GROUP BY region
+ORDER BY Sales_rep_COUNT
+
+-- 
 -- SQL Subqueries * Temporary Tables
